@@ -80,7 +80,7 @@
         interactiveShellInit = ''
           eval "$(zoxide init zsh)"
           c() { claude "$@"; }
-          csd() { claude --dangerously-skip-permissions "$@"; }
+          sus() { claude --dangerously-skip-permissions "$@"; }
         '';
       };
 
