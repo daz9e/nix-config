@@ -12,6 +12,7 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, home-manager }:
   let
+    homeManagerConfig = import ./home.nix;
     configuration = { pkgs, ... }: {
       system.primaryUser = "daze";
 
@@ -39,6 +40,7 @@
         pkgs.sshpass
         pkgs.zoxide
         pkgs.opencode
+        pkgs.lazygit
 
         # Dev
         pkgs.go
@@ -46,6 +48,7 @@
         pkgs.php
         pkgs.php84Packages.composer
         pkgs.pnpm
+        pkgs.python3
 
         # Apps
       ];
@@ -63,11 +66,10 @@
           "postman"
           "git-credential-manager"
           "obsidian"
-          # "ghostty"
           "zen"
           "raycast"
           "claude-code"
-          "orbstack"
+          "arduino-ide"
         ];
         # masApps = {
         #   "Xcode" = 497799835;
@@ -138,18 +140,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.daze = { pkgs, ... }: {
-            home.stateVersion = "25.11";
-            programs.ghostty = {
-              enable = true;
-              package = pkgs.ghostty-bin;
-              settings = {
-                macos-option-as-alt = true;
-                font-size = 16;
-                maximize = true;
-              };
-            };
-          };
+          home-manager.users.daze = homeManagerConfig;
         }
       ];
     };
