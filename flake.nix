@@ -37,6 +37,7 @@
         pkgs.ripgrep
         pkgs.tree
         pkgs.wget
+        pkgs.ffmpeg
         pkgs.sshpass
         pkgs.zoxide
         pkgs.opencode
