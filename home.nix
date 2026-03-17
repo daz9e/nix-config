@@ -15,6 +15,7 @@
       eval "$(zoxide init zsh)"
       c() { claude "$@"; }
       sus() { claude --dangerously-skip-permissions "$@"; }
+      lg() { lazygit }
     '';
   };
 
