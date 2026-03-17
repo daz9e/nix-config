@@ -48,9 +48,13 @@
         pkgs.php
         pkgs.php84Packages.composer
         pkgs.pnpm
-        pkgs.python3
+        (pkgs.python3.withPackages (ps: [ ps.pip ps.setuptools ]))
+
 
         # Apps
+        pkgs.bitwarden-desktop
+        pkgs.google-chrome
+        pkgs.alacritty
       ];
 
       homebrew = {
@@ -88,14 +92,7 @@
         rpi = "ssh rpi.local";
       };
 
-      programs.zsh = {
-        enable = true;
-        interactiveShellInit = ''
-          eval "$(zoxide init zsh)"
-          c() { claude "$@"; }
-          sus() { claude --dangerously-skip-permissions "$@"; }
-        '';
-      };
+      programs.zsh.enable = true;
 
      security.sudo.extraConfig = ''
         Defaults secure_path="/run/current-system/sw/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
