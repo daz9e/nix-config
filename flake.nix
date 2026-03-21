@@ -75,6 +75,7 @@
           "raycast"
           "claude-code"
           "arduino-ide"
+          "lm-studio"
         ];
         # masApps = {
         #   "Xcode" = 497799835;
