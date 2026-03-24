@@ -62,6 +62,7 @@
         enable = true;
         brews = [
           "poppler"
+          "mole"
         ];
         casks = [
           "discord"
