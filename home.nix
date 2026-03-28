@@ -14,7 +14,7 @@
     initContent = ''
       eval "$(zoxide init zsh)"
       c() { claude "$@"; }
-      sus() { claude --enable-auto-mod "$@"; }
+      sus() { claude --enable-auto-mode "$@"; }
       lg() { lazygit }
     '';
   };
