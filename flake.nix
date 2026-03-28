@@ -49,8 +49,8 @@
         pkgs.php
         pkgs.php84Packages.composer
         pkgs.pnpm
-        (pkgs.python3.withPackages (ps: [ ps.pip ps.setuptools ]))
-
+        pkgs.cmake
+        pkgs.python3
 
         # Apps
         pkgs.bitwarden-desktop
