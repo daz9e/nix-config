@@ -8,9 +8,12 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, home-manager }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, home-manager, nixos-raspberrypi, agenix }:
   let
     homeManagerConfig = import ./home.nix;
     configuration = { pkgs, ... }: {
@@ -81,9 +84,6 @@
           "arduino-ide"
           "lm-studio"
         ];
-        # masApps = {
-        #   "Xcode" = 497799835;
-        # };
         onActivation.cleanup = "zap";
         onActivation.autoUpdate = true;
         onActivation.upgrade = true;
@@ -95,6 +95,7 @@
 
       environment.shellAliases = {
         rebuild = "sudo darwin-rebuild switch --flake $HOME/nix#macbook";
+        rebuild-rpi = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#rpi --target-host root@192.168.1.7";
         rpi = "ssh rpi.local";
       };
 
@@ -104,20 +105,33 @@
         Defaults secure_path="/run/current-system/sw/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       '';
 
-      # Necessary for using flakes on this system.
-      nix.settings.experimental-features = "nix-command flakes";
+      nix = {
+        # Necessary for using flakes on this system.
+        settings = {
+          experimental-features = "nix-command flakes";
+          trusted-users = [ "@admin" ];
+        };
 
-      # Enable alternative shell support in nix-darwin.
-      # programs.fish.enable = true;
+        linux-builder = {
+          enable = true;
+          ephemeral = true;
+          maxJobs = 4;
+          config = {
+            virtualisation = {
+              darwin-builder = {
+                diskSize = 20 * 1024;
+                memorySize = 8 * 1024;
+              };
+              cores = 6;
+            };
+          };
+        };
+      };
 
-      # Set Git commit hash for darwin-version.
       system.configurationRevision = self.rev or self.dirtyRev or null;
 
-      # Used for backwards compatibility, please read the changelog before changing.
-      # $ darwin-rebuild changelog
       system.stateVersion = 6;
 
-      # The platform the configuration will be used on.
       nixpkgs.hostPlatform = "aarch64-darwin";
 
       nixpkgs.config.allowUnfree = true;
@@ -125,6 +139,23 @@
     };
   in
   {
+    nixosConfigurations."rpi" = nixos-raspberrypi.lib.nixosSystemFull {
+      specialArgs = inputs // { inherit self; };
+      modules = [
+        nixos-raspberrypi.nixosModules.sd-image
+        agenix.nixosModules.default
+        {
+          imports = with nixos-raspberrypi.nixosModules; [
+            raspberry-pi-5.base
+            raspberry-pi-5.page-size-16k
+          ];
+        }
+        ./hosts/rpi
+      ];
+    };
+
+    images.rpi = self.nixosConfigurations.rpi.config.system.build.sdImage;
+
     # Build darwin flake using:
     # $ darwin-rebuild build --flake .#macbook
     darwinConfigurations."macbook" = nix-darwin.lib.darwinSystem {
