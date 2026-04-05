@@ -41,6 +41,7 @@
         pkgs.sshpass
         pkgs.zoxide
         pkgs.opencode
+        pkgs.codex
         pkgs.lazygit
 
         # Dev
@@ -51,6 +52,8 @@
         pkgs.pnpm
         pkgs.cmake
         pkgs.python3
+        pkgs.flutter
+
 
         # Apps
         pkgs.bitwarden-desktop
