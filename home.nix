@@ -70,6 +70,18 @@
     '';
   };
 
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      zlobuilder = {
+        hostname = "m1.zloserver.com";
+        port = 42291;
+        user = "root";
+      };
+    };
+  };
+
   programs.ghostty = {
     enable = true;
     package = pkgs.ghostty-bin;

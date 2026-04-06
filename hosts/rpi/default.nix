@@ -1,11 +1,16 @@
 { self, config, pkgs, lib, agenix, ... }:
+let
+  dataDiskUuid = "24982dc0-36bf-40d8-9187-2816437247fd";
+in
 {
   imports = [
     ./services/adguard.nix
     ./services/vaultwarden.nix
     ./services/cloudflared.nix
     ./services/forgejo.nix
-    ./services/paperless.nix
+    # ./services/paperless.nix
+    ./services/money-convert.nix
+    # ./services/immich.nix
   ];
 
   networking.hostName = "rpi";
@@ -53,6 +58,12 @@
     htop
     tree
   ];
+
+  fileSystems."/mnt/data" = {
+    device = "/dev/disk/by-uuid/${dataDiskUuid}";
+    fsType = "ext4";
+    options = [ "defaults" "nofail" ];
+  };
 
   boot.loader.raspberry-pi.bootloader = "kernel";
 

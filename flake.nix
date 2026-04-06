@@ -11,9 +11,10 @@
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
+    money-convert.url = "github:daz9e/currency-converter";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, home-manager, nixos-raspberrypi, agenix }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, home-manager, nixos-raspberrypi, agenix, money-convert }:
   let
     homeManagerConfig = import ./home.nix;
     configuration = { pkgs, ... }: {
@@ -46,6 +47,7 @@
         pkgs.opencode
         pkgs.codex
         pkgs.lazygit
+        agenix.packages.aarch64-darwin.default
 
         # Dev
         pkgs.go
@@ -111,6 +113,21 @@
           experimental-features = "nix-command flakes";
           trusted-users = [ "@admin" ];
         };
+
+        linux-builder = {
+          enable = true;
+          ephemeral = true;
+          maxJobs = 4;
+          config = {
+            virtualisation = {
+              darwin-builder = {
+                diskSize = 15 * 1024;
+                memorySize = 8 * 1024;
+              };
+              cores = 6;
+            };
+          };
+        };
       };
 
       system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -129,6 +146,7 @@
       modules = [
         nixos-raspberrypi.nixosModules.sd-image
         agenix.nixosModules.default
+        money-convert.nixosModules.default
         {
           imports = with nixos-raspberrypi.nixosModules; [
             raspberry-pi-5.base
@@ -159,6 +177,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "bak";
           home-manager.users.daze = homeManagerConfig;
         }
       ];
