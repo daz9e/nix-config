@@ -7,4 +7,6 @@ let
 in
 {
   "wifi-password.age".publicKeys = allKeys;
+  "vaultwarden.age".publicKeys = allKeys;
+  "cloudflared.age".publicKeys = allKeys;
 }

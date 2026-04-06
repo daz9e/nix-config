@@ -2,6 +2,10 @@
 {
   imports = [
     ./services/adguard.nix
+    ./services/vaultwarden.nix
+    ./services/cloudflared.nix
+    ./services/forgejo.nix
+    ./services/paperless.nix
   ];
 
   networking.hostName = "rpi";
