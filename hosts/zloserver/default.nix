@@ -42,7 +42,18 @@
     tmux
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  fileSystems."/mnt/data" = {
+    device = "/dev/disk/by-uuid/205ccad1-88ed-4c02-8e43-d8655144118b";
+    fsType = "ext4";
+    options = [ "defaults" "nofail" ];
+  };
+
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    trusted-users = [ "root" "daze" ];
+  };
 
   system.stateVersion = "25.11";
 }
