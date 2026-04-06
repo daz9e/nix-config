@@ -157,6 +157,13 @@
       ];
     };
 
+    nixosConfigurations."zloserver" = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/zloserver
+      ];
+    };
+
     images.rpi = self.nixosConfigurations.rpi.config.system.build.sdImage;
 
     # Build darwin flake using:
