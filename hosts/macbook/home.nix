@@ -74,9 +74,13 @@
     enable = true;
     enableDefaultConfig = false;
     matchBlocks = {
-      zlobuilder = {
-        hostname = "m1.zloserver.com";
-        port = 42291;
+      zlo = {
+        hostname = "s4.zloserver.com";
+        port = 41230;
+        user = "root";
+      };
+      rpi = {
+        hostname = "192.168.1.7";
         user = "root";
       };
     };

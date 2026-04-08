@@ -78,7 +78,8 @@
 
   environment.shellAliases = {
     r = "sudo darwin-rebuild switch --flake $HOME/nix#macbook";
-    rrpi = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#rpi --target-host root@192.168.1.7 --target-host root@192.168.1.7";
+    rrpi = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#rpi --target-host root@192.168.1.7 --build-host root@192.168.1.7";
+    rzlo = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#zloserver --target-host root@zlo --build-host root@zlo";
   };
 
   programs.zsh.enable = true;
