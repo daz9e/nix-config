@@ -17,6 +17,24 @@
     ];
   };
 
+  # restic user
+  users.groups.restic = {};
+
+  users.users.restic = {
+    isNormalUser = true;
+    group = "restic";
+    createHome = true;
+    home = "/var/lib/restic";
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJmm8v4Sk3eNm1nZdiO1A/0WkERCPggBpVyBZ0JNhp/o restic-zloserver"
+    ];
+  };
+
+  systemd.tmpfiles.rules = [
+      "d /mnt/data/restic 0750 restic restic - -"
+      "d /mnt/data/restic/rpi-data 0750 restic restic - -"
+    ];
+
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMiL7EzQF7kBBfQDU2R8crMFvVrEZTslH1WcQJylxrQ9"
   ];

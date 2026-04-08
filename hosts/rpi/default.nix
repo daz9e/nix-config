@@ -1,6 +1,7 @@
 { self, config, pkgs, lib, agenix, ... }:
 let
   dataDiskUuid = "24982dc0-36bf-40d8-9187-2816437247fd";
+  sdDiskUuid = "f0abac56-08be-42e2-8726-9baa083e8685";
 in
 {
   imports = [
@@ -8,9 +9,8 @@ in
     ./services/vaultwarden.nix
     ./services/cloudflared.nix
     ./services/forgejo.nix
-    # ./services/paperless.nix
     ./services/money-convert.nix
-    # ./services/immich.nix
+    ./services/restic.nix
   ];
 
   networking.hostName = "rpi";
@@ -53,6 +53,25 @@ in
 
   services.openssh.enable = true;
 
+  programs.ssh.extraConfig = ''
+    Host zlo
+      HostName s4.zloserver.com
+      User root
+      Port 41230
+
+    Host zlo-restic
+      HostName s4.zloserver.com
+      User restic
+      Port 41230
+      IdentityFile ${config.age.secrets.restic-zloserver-key.path}
+      IdentitiesOnly yes
+      StrictHostKeyChecking accept-new
+  '';
+
+  virtualisation.docker = {
+    enable = true;
+  };
+
   environment.systemPackages = with pkgs; [
     vim
     htop
@@ -61,6 +80,12 @@ in
 
   fileSystems."/mnt/data" = {
     device = "/dev/disk/by-uuid/${dataDiskUuid}";
+    fsType = "ext4";
+    options = [ "defaults" "nofail" ];
+  };
+
+  fileSystems."/mnt/sd" = {
+    device = "/dev/disk/by-uuid/${sdDiskUuid}";
     fsType = "ext4";
     options = [ "defaults" "nofail" ];
   };
