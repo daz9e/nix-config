@@ -14,6 +14,7 @@
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMiL7EzQF7kBBfQDU2R8crMFvVrEZTslH1WcQJylxrQ9"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIHcdeukE4Ocv7YTuQHB/p/gIun3QRD/CJLF8PwGw3is daze@rpi"
     ];
   };
 
@@ -45,10 +46,11 @@
     settings = {
       PermitRootLogin = "prohibit-password";
       PasswordAuthentication = false;
+      GatewayPorts = "yes";
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 41230 ];
+  networking.firewall.allowedTCPPorts = [ 41230 41231 ];
 
   environment.systemPackages = with pkgs; [
     vim

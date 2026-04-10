@@ -1,7 +1,10 @@
-{ self, config, pkgs, lib, agenix, ... }:
+{ self, config, pkgs, lib, agenix, nixpkgs, ... }:
 let
   dataDiskUuid = "24982dc0-36bf-40d8-9187-2816437247fd";
   sdDiskUuid = "f0abac56-08be-42e2-8726-9baa083e8685";
+  vanillaPkgs = import nixpkgs {
+    system = pkgs.system;
+  };
 in
 {
   imports = [
@@ -11,6 +14,10 @@ in
     ./services/forgejo.nix
     ./services/money-convert.nix
     ./services/restic.nix
+    ./services/immich.nix
+    ./services/autossh.nix
+    # ./services/nixflix.nix
+    # ./services/paperless.nix
   ];
 
   networking.hostName = "rpi";
@@ -19,29 +26,17 @@ in
     file = "${self}/secrets/wifi-password.age";
   };
 
-  networking.networkmanager = {
+  networking.wireless = {
     enable = true;
-    ensureProfiles = {
-      environmentFiles = [
-        config.age.secrets.wifi-env.path
-      ];
-      profiles.Home = {
-        connection = {
-          id = "$WIFI_SSID";
-          type = "wifi";
-        };
-        wifi.ssid = "$WIFI_SSID";
-        wifi-security = {
-          key-mgmt = "wpa-psk";
-          psk = "$WIFI_PSK";
-        };
-      };
+    secretsFile = config.age.secrets.wifi-env.path;
+    networks."Yettel_EC8AAC" = {
+      pskRaw = "ext:WIFI_PSK";
     };
   };
 
   users.users.daze = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMiL7EzQF7kBBfQDU2R8crMFvVrEZTslH1WcQJylxrQ9"
     ];
@@ -52,6 +47,13 @@ in
   ];
 
   services.openssh.enable = true;
+
+  programs.ssh.knownHosts = {
+    zloserver = {
+      hostNames = [ "[s4.zloserver.com]:41230" ];
+      publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDjxH4aUVsyndWX3m1vWMZBy81Wd4dN3U3rBTH2ayxtk";
+    };
+  };
 
   programs.ssh.extraConfig = ''
     Host zlo
@@ -91,6 +93,8 @@ in
   };
 
   boot.loader.raspberry-pi.bootloader = "kernel";
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "25.11";
 }

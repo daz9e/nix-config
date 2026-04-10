@@ -78,7 +78,7 @@
 
   environment.shellAliases = {
     r = "sudo darwin-rebuild switch --flake $HOME/nix#macbook";
-    rrpi = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#rpi --target-host root@192.168.1.7 --build-host root@192.168.1.7";
+    rrpi = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#rpi --target-host root@192.168.1.7";
     rzlo = "nix run nixpkgs#nixos-rebuild -- switch --flake $HOME/nix#zloserver --target-host root@zlo --build-host root@zlo";
   };
 
@@ -99,9 +99,11 @@
       ephemeral = true;
       maxJobs = 4;
       config = {
+        nix.settings.substituters = [ "https://cache.nixos.org" ];
+        nix.settings.trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
         virtualisation = {
           darwin-builder = {
-            diskSize = 15 * 1024;
+            diskSize = 30 * 1024;
             memorySize = 8 * 1024;
           };
           cores = 6;

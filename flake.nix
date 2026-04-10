@@ -1,8 +1,18 @@
 {
   description = "daze macbook nix-darwin system flake";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://nixos-raspberrypi.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nixos-raspberrypi.cachix.org-1:4iMO9LXa8BqhU+Rpg6LQKiGa2lsNh/j2oiYLNOQ5sPI="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-immich.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
@@ -12,16 +22,19 @@
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
     money-convert.url = "github:daz9e/currency-converter";
+    nixflix.url = "github:kiriwalawren/nixflix";
+    nixflix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew, home-manager, nixos-raspberrypi, agenix, money-convert }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, nixpkgs-immich, nix-homebrew, home-manager, nixos-raspberrypi, agenix, money-convert, nixflix, ... }:
   {
-    nixosConfigurations."rpi" = nixos-raspberrypi.lib.nixosSystemFull {
+    nixosConfigurations."rpi" = nixos-raspberrypi.lib.nixosSystem {
       specialArgs = inputs // { inherit self; };
       modules = [
         nixos-raspberrypi.nixosModules.sd-image
         agenix.nixosModules.default
         money-convert.nixosModules.default
+        inputs.nixflix.nixosModules.default
         {
           imports = with nixos-raspberrypi.nixosModules; [
             raspberry-pi-5.base

@@ -1,4 +1,12 @@
 { pkgs, ... }:
+let
+  ghosttyCursorShaders = pkgs.fetchFromGitHub {
+    owner = "sahaj-b";
+    repo = "ghostty-cursor-shaders";
+    rev = "4faa83e4b9306750fc8de64b38c6f53c57862db8";
+    hash = "sha256-ruhEqXnWRCYdX5mRczpY3rj1DTdxyY3BoN9pdlDOKrE=";
+  };
+in
 {
   home.stateVersion = "25.11";
 
@@ -93,6 +101,13 @@
       macos-option-as-alt = true;
       font-size = 16;
       maximize = true;
+      custom-shader-animation = "always";
+      custom-shader = [
+        "shaders/cursor_warp.glsl"
+        "shaders/ripple_cursor.glsl"
+      ];
     };
   };
+
+  xdg.configFile."ghostty/shaders".source = ghosttyCursorShaders;
 }
