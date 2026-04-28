@@ -52,6 +52,13 @@
       ];
     };
 
+    nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./hosts/desktop
+      ];
+    };
+
     images.rpi = self.nixosConfigurations.rpi.config.system.build.sdImage;
 
     # Build darwin flake using:
