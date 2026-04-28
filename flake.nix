@@ -18,6 +18,8 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    noctalia.url = "github:noctalia-dev/noctalia-shell";
+    noctalia.inputs.nixpkgs.follows = "nixpkgs";
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
@@ -26,7 +28,7 @@
     nixflix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, nixpkgs-immich, nix-homebrew, home-manager, nixos-raspberrypi, agenix, money-convert, nixflix, ... }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, nixpkgs-immich, nix-homebrew, home-manager, noctalia, nixos-raspberrypi, agenix, money-convert, nixflix, ... }:
   {
     nixosConfigurations."rpi" = nixos-raspberrypi.lib.nixosSystem {
       specialArgs = inputs // { inherit self; };
@@ -54,6 +56,7 @@
 
     nixosConfigurations."desktop" = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = inputs // { inherit self; inputs = inputs; };
       modules = [
         ./hosts/desktop
       ];

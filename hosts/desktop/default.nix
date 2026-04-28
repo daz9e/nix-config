@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -10,6 +10,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.networkmanager.enable = true;
+  hardware.bluetooth.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   time.timeZone = "Europe/Belgrade";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -32,9 +35,9 @@
     fastfetch
     htop
     btop
-
     kitty
     alacritty
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   programs.niri.enable = true;
