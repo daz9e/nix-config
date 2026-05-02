@@ -38,6 +38,8 @@
     kitty
     alacritty
     inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+    codex
+    firefox
   ];
 
   programs.niri.enable = true;
